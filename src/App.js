@@ -136,6 +136,74 @@ function GameTable(props){
   );
 }
 
+const board = {
+  Standard : [
+    'e','e','p','p','p','e','e',
+    'e','e','p','p','p','e','e',
+    'p','p','p','p','p','p','p',
+    'p','p','p','h','p','p','p',
+    'p','p','p','p','p','p','p',
+    'e','e','p','p','p','e','e',
+    'e','e','p','p','p','e','e',
+    ],
+  Cross : [
+    'e','e','h','h','h','e','e',
+    'e','e','h','p','h','e','e',
+    'h','h','p','p','p','h','h',
+    'h','h','h','p','h','h','h',
+    'h','h','h','p','h','h','h',
+    'e','e','h','h','h','e','e',
+    'e','e','h','h','h','e','e',
+    ],
+  Plus : [
+    'e','e','h','h','h','e','e',
+    'e','e','h','p','h','e','e',
+    'h','h','h','p','h','h','h',
+    'h','p','p','p','p','p','h',
+    'h','h','h','p','h','h','h',
+    'e','e','h','p','h','e','e',
+    'e','e','h','h','h','e','e',
+    ],
+  Bench : [
+    'e','e','p','p','p','e','e',
+    'e','e','p','p','p','e','e',
+    'h','h','p','p','p','h','h',
+    'h','h','p','h','p','h','h',
+    'h','h','h','h','h','h','h',
+    'e','e','h','h','h','e','e',
+    'e','e','h','h','h','e','e',
+    ],
+  Arrow : [
+    'e','e','h','p','h','e','e',
+    'e','e','p','p','p','e','e',
+    'h','p','p','p','p','p','h',
+    'h','h','h','p','h','h','h',
+    'h','h','h','p','h','h','h',
+    'e','e','p','p','p','e','e',
+    'e','e','p','p','p','e','e',
+    ],
+  Pyramid : [
+    'e','e','h','h','h','e','e',
+    'e','e','h','p','h','e','e',
+    'h','h','p','p','p','h','h',
+    'h','p','p','p','p','p','h',
+    'p','p','p','p','p','p','p',
+    'e','e','h','h','h','e','e',
+    'e','e','h','h','h','e','e',
+  ],
+  Diamond : [
+    'e','e','h','p','h','e','e',
+    'e','e','p','p','p','e','e',
+    'h','p','p','p','p','p','h',
+    'p','p','p','h','p','p','p',
+    'h','p','p','p','p','p','h',
+    'e','e','p','p','p','e','e',
+    'e','e','h','p','h','e','e',
+  ]
+}
+
+
+
 class App extends Component {
 
   // e: empty / p: pin / c: chosen / h: hole 
@@ -143,32 +211,23 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      stepNumber: 0,
-      squares: [
-        'e','e','p','p','p','e','e',
-        'e','e','p','p','p','e','e',
-        'p','p','p','p','p','p','p',
-        'p','p','p','h','p','p','p',
-        'p','p','p','p','p','p','p',
-        'e','e','p','p','p','e','e',
-        'e','e','p','p','p','e','e',
-        ],
+      squares: board.Standard.slice(),
       chosenPin: null
     };
   }
 
   restart(){
     this.setState({
-      stepNumber: 0,
-      squares: [
-        'e','e','p','p','p','e','e',
-        'e','e','p','p','p','e','e',
-        'p','p','p','p','p','p','p',
-        'p','p','p','h','p','p','p',
-        'p','p','p','p','p','p','p',
-        'e','e','p','p','p','e','e',
-        'e','e','p','p','p','e','e',
-        ],
+      squares: board.Standard.slice(),
+      chosenPin: null
+    });
+  }
+
+  setBoard(type){
+    console.log('SET BOARD TO ');
+    console.log(type);
+    this.setState({
+      squares: board[type].slice(),
       chosenPin: null
     });
   }
@@ -199,7 +258,7 @@ class App extends Component {
     last_squares[middlePinPosition]='h';
     last_squares[origin]='h';
     last_squares[destiny]='p';
-    const squares = last_squares;
+    const squares = last_squares.slice();
     this.setState({
       chosenPin : null,
       squares : squares
@@ -224,17 +283,22 @@ class App extends Component {
   }
 
   render() {
-    const squares = this.state.squares;
-    const chosenPin = this.state.chosenPin;
-
+    const self = this;
+    const squares = self.state.squares;
+    const chosenPin = self.state.chosenPin;
+    const boardTypeList= Object.keys(board).map(function(name){
+      return <button onClick={()=> self.setBoard(name)}> {name} </button>;
+    })
     return (
       <div className="App">
         <GameTable
         squares={squares}
         chosenPin={chosenPin}
-        onClick={(i) => this.handleClick(i)}
+        onClick={(i) => self.handleClick(i)}
          />
-        <button onClick={()=> this.restart()}> Restart </button>
+        <button onClick={()=> self.restart()}> Restart </button>
+        <hr/>
+        <ul>{ boardTypeList }</ul>
       </div>
     );
   }
